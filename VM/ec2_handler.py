@@ -33,18 +33,29 @@ class EC2ResourceHandler:
                      {'Name': 'image-type',
                       'Values': ['machine']},
                      {'Name': 'root-device-type',
-                      'Values': ['ebs']}
+                      'Values': ['ebs']},
+                    #  {'Name': 'name',
+                    #   'Values': ['amzn-ami-hvm-????.??.?.????????-x86_64-gp2']},
                      ],
         )
-        ami_id = 'ami-7d620c6a'
+        ami_id = ''
         images = images_response['Images']
+        
+        # print("Images response: ")
+        # print(images_response)
+
+        # print("Images: ")
+        # print(images)
+
         for image in images:
             if 'Name' in image:
                 image_name = image['Name']
                 # Modify following line to search for Amazon Linux AMI for us-east-1
                 if image_name.find("111") >= 0:
                     ami_id = image['ImageId']
+                    print("Ami ID is: " + ami_id + '\n')
                     break
+
         return ami_id
 
     def _get_userdata(self):
@@ -71,8 +82,19 @@ class EC2ResourceHandler:
         default_security_group_id = 'sg-1b7c1350'
 
         # 3. Create a new security group
+        response = self.client.create_security_group(
+            Description = 'New group for Clout Computing Assignment #1',
+            GroupName = 'newGroup',
+        )
+
         # 4. Authorize ingress traffic for the group from anywhere to Port 80 for HTTP traffic
-        http_security_group_id = 'sg-0f39b77cdd4bc67c9'
+        http_security_group_id = response['GroupId']
+        self.client.authorize_security_group_ingress(
+            FromPort = -1,
+            GroupId = http_security_group_id,
+            ToPort = 80
+        )
+
 
         security_groups.append(default_security_group_id)
         security_groups.append(http_security_group_id)
@@ -117,7 +139,22 @@ class EC2ResourceHandler:
                 instance_id,
             ]
         )
-        print("Parsing instance id: " + instance_id)
+
+        # Parsing information from response
+        public_dns = response['Reservations'][0]['Instances'][0]['NetworkInterfaces'][0]['Association']['PublicDnsName']
+        public_ip = response['Reservations'][0]['Instances'][0]['NetworkInterfaces'][0]['Association']['PublicIp']
+
+        # Print information
+        print("")
+        print("Public DNS: " + public_dns)
+        print("Public IP: " + public_ip)
+        print("You can view more information at the following URLS:")
+
+        # http://<Public-dns-name-of-instance>/phpinfo.php
+        print('http://' + public_dns + '/phpinfo.php')
+
+        # <Public-IP-Address-of-Instance>/phpinfo.php
+        print(public_ip + '/phpinfo.php')
 
         return
 
@@ -132,7 +169,7 @@ class EC2ResourceHandler:
                 instance_id,
             ]
         )
-        print("Deleted instance id: " + instance_id)
+        print("Deleted instance id: " + instance_id + '\n')
         return
 
 
