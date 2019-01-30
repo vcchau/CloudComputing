@@ -36,17 +36,17 @@ class EC2ResourceHandler:
                       'Values': ['ebs']}
                      ],
         )
-        ami_id = ''
+        ami_id = 'ami-7d620c6a'
         images = images_response['Images']
         for image in images:
             if 'Name' in image:
                 image_name = image['Name']
                 # Modify following line to search for Amazon Linux AMI for us-east-1
-                if image_name.find("ubuntu/images/hvm-ssd/ubuntu-xenial-16.04-amd64-server-2018") >= 0:
+                if image_name.find("111") >= 0:
                     ami_id = image['ImageId']
                     break
         return ami_id
-    
+
     def _get_userdata(self):
         user_data = """
             #!/bin/bash
@@ -63,16 +63,16 @@ class EC2ResourceHandler:
             echo "<?php phpinfo(); ?>" > /var/www/html/phpinfo.php
         """
         return user_data
-    
+
     def _get_security_groups(self):
         security_groups = []
-        
+
         # 2. Get security group id of the 'default' security group
-        default_security_group_id = ''
+        default_security_group_id = 'sg-1b7c1350'
 
         # 3. Create a new security group
         # 4. Authorize ingress traffic for the group from anywhere to Port 80 for HTTP traffic
-        http_security_group_id = ''
+        http_security_group_id = 'sg-0f39b77cdd4bc67c9'
 
         security_groups.append(default_security_group_id)
         security_groups.append(http_security_group_id)
@@ -98,9 +98,11 @@ class EC2ResourceHandler:
             UserData=user_data,
             SecurityGroupIds=security_groups
         )
-        
+
         # 5. Parse instance_id from the response
-        instance_id = ''
+        instance_id = response['Instances'][0]['InstanceId']
+
+        print("Instance ID: " + instance_id)
 
         return instance_id
 
@@ -110,7 +112,13 @@ class EC2ResourceHandler:
         self.logger.info("Entered get")
 
         # Use describe_instances call
-        
+        response = self.client.describe_instances(
+            InstanceIds = [
+                instance_id,
+            ]
+        )
+        print("Parsing instance id: " + instance_id)
+
         return
 
 
@@ -119,7 +127,12 @@ class EC2ResourceHandler:
         self.logger.info("Entered delete")
 
         # Use terminate_instances call
-
+        response = self.client.terminate_instances(
+            InstanceIds = [
+                instance_id,
+            ]
+        )
+        print("Deleted instance id: " + instance_id)
         return
 
 
@@ -144,6 +157,8 @@ def main():
 
     raw_input("Hit Enter to continue>")
     ec2_handler.delete(instance_id)
+
+
 
 
 if __name__ == '__main__':
