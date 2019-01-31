@@ -40,20 +40,14 @@ class EC2ResourceHandler:
         )
         ami_id = ''
         images = images_response['Images']
-        
-        # print("Images response: ")
-        # print(images_response)
-
-        # print("Images: ")
-        # print(images)
 
         for image in images:
             if 'Name' in image:
                 image_name = image['Name']
                 # Modify following line to search for Amazon Linux AMI for us-east-1
-                if image_name.find("111") >= 0:
+                if image_name.find("amzn-ami-hvm-2012.03.1.x86_64-ebs") >= 0:
                     ami_id = image['ImageId']
-                    print("Ami ID is: " + ami_id + '\n')
+                    print("Ami ID is: " + ami_id)
                     break
 
         return ami_id
@@ -79,21 +73,47 @@ class EC2ResourceHandler:
         security_groups = []
 
         # 2. Get security group id of the 'default' security group
-        default_security_group_id = 'sg-1b7c1350'
+        response = self.client.describe_security_groups(
+            GroupNames = [
+                'default'
+            ]
+        )
+        default_security_group_id = response['SecurityGroups'][0]['GroupId']
 
         # 3. Create a new security group
-        response = self.client.create_security_group(
-            Description = 'New group for Clout Computing Assignment #1',
-            GroupName = 'newGroup',
-        )
+        response = ''
+        # Check to see if the group exists already
+        try:
+            response = self.client.create_security_group(
+                Description = 'New group for Clout Computing Assignment #1',
+                GroupName = 'newGroup',
+            )
+        # If group exists, ask user if they wish to overwrite
+        except:
+            print("The security already exists. Would you like to overwrite the current group?")
+            answer = raw_input("Type Y or y to confirm. ")
+
+            # Delete and overwrite security group 'newGroup'
+            if (answer == 'Y' or answer == 'y'):
+                self.client.delete_security_group(
+                    GroupName = 'newGroup'
+                )
+                response = self.client.create_security_group(
+                    Description = 'New group for Clout Computing Assignment #1',
+                    GroupName = 'newGroup',
+                )
 
         # 4. Authorize ingress traffic for the group from anywhere to Port 80 for HTTP traffic
         http_security_group_id = response['GroupId']
+        print("Your new group ID is: " + http_security_group_id)
         self.client.authorize_security_group_ingress(
-            FromPort = -1,
+            CidrIp = '0.0.0.0/0',
+            FromPort = 80,
             GroupId = http_security_group_id,
-            ToPort = 80
+            ToPort = 80,
+            IpProtocol = '-1'
         )
+        print("Authorized traffic from anywhere to Port 80 for HTTP.")
 
 
         security_groups.append(default_security_group_id)
@@ -133,6 +153,7 @@ class EC2ResourceHandler:
     def get(self, instance_id):
         self.logger.info("Entered get")
 
+        print("Retrieving information about instance ID: " + instance_id)
         # Use describe_instances call
         response = self.client.describe_instances(
             InstanceIds = [
@@ -145,7 +166,6 @@ class EC2ResourceHandler:
         public_ip = response['Reservations'][0]['Instances'][0]['NetworkInterfaces'][0]['Association']['PublicIp']
 
         # Print information
-        print("")
         print("Public DNS: " + public_dns)
         print("Public IP: " + public_ip)
         print("You can view more information at the following URLS:")
@@ -188,13 +208,13 @@ def main():
 
     instance_id = ec2_handler.create()
     print("EC2 instance provisioning started")
+    print("Please allow time for the instance to start.")
 
     raw_input("Hit Enter to continue>")
     ec2_handler.get(instance_id)
 
     raw_input("Hit Enter to continue>")
     ec2_handler.delete(instance_id)
-
 
 
 
