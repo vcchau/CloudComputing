@@ -30,7 +30,7 @@ class S3Handler:
         print("5. deletedir <bucket_name>")
         print("6. find <file_extension> [<bucket_name>] -- e.g.: 1. find txt  2. find txt bucket1 --")
         print("7. listdir [<bucket_name>]")
-    
+
     def _error_messages(self, issue):
         error_message_dict = {}
         error_message_dict['incorrect_parameter_number'] = 'Incorrect number of parameters provided'
@@ -58,7 +58,7 @@ class S3Handler:
         except Exception as e:
             # print(e)
             # traceback.print_exc(file=sys.stdout)
-            
+
             response_code = e.response['Error']['Code']
             if response_code == '404':
                 return False
@@ -89,11 +89,19 @@ class S3Handler:
         return operation_successful
 
     def listdir(self, bucket_name):
-        # If bucket_name is provided, check that bucket exits.
-        
+        s3 = boto3.resource('s3')
         # If bucket_name is empty then display the names of all the buckets
-        
-        # If bucket_name is provided then display the names of all objects in the bucket
+        if not bucket_name:
+            for bucket in s3.buckets.all():
+                print(bucket.name)
+
+        # If bucket_name is provided, check that bucket exits.
+        else:
+            # If bucket_name is provided then display the names of all objects in the bucket
+            bucket = s3.Bucket(bucket_name)
+            for obj in bucket.objects.all():
+                print(obj.key)
+
         return self._error_messages('not_implemented')
 
     def upload(self, source_file_name, bucket_name, dest_object_name=''):
@@ -116,9 +124,9 @@ class S3Handler:
         # if source_file_name is not specified then use the dest_object_name as the source_file_name
         # If the current directory already contains a file with source_file_name then move it as a backup
         # with following format: <source_file_name.bak.current_time_stamp_in_millis>
-        
+
         # Parameter Validation
-        
+
         # SDK Call
 
         # Success response
@@ -128,19 +136,19 @@ class S3Handler:
 
 
     def delete(self, dest_object_name, bucket_name):
-        
+
         # Success response
         # operation_successful = ('Object %s deleted from bucket %s.' % (dest_object_name, bucket_name))
-        
+
         return self._error_messages('not_implemented')
 
 
     def deletedir(self, bucket_name):
         # Delete the bucket only if it is empty
-        
+
         # Success response
         # operation_successful = ("Deleted bucket %s." % bucket_name)
-        
+
         return self._error_messages('not_implemented')
 
 
@@ -149,9 +157,9 @@ class S3Handler:
 
         # If bucket_name is specified then search for objects in that bucket.
         # If bucket_name is empty then search all buckets
-        
 
-        
+
+
         return self._error_messages('not_implemented')
 
 
@@ -208,7 +216,7 @@ class S3Handler:
 def main():
 
     s3_handler = S3Handler()
-    
+
     while True:
         try:
             command_string = ''
@@ -216,10 +224,10 @@ def main():
                 command_string = raw_input("Enter command ('help' to see all commands, 'exit' to quit)>")
             else:
                 command_string = input("Enter command ('help' to see all commands, 'exit' to quit)>")
-    
+
             # Remove multiple whitespaces, if they exist
             command_string = " ".join(command_string.split())
-            
+
             if command_string == 'exit':
                 print("Good bye!")
                 exit()
