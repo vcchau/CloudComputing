@@ -97,6 +97,7 @@ class S3Handler:
                 resource_list += bucket.name
                 resource_list += ', '
 
+        # Bucket_name is not empty; list contents of the bucket
         else:
             try:
                 # If bucket_name is provided, check that bucket exits.
@@ -123,6 +124,7 @@ class S3Handler:
         try:
             response = self.client.head_bucket(Bucket = bucket_name)
 
+            # Verify the source file exists
             try:
                 s3 = boto3.resource('s3')
                 # 2. If dest_object_name is not specified then use the source_file_name as dest_object_name
@@ -131,6 +133,8 @@ class S3Handler:
 
                 extension = self._get_file_extension(source_file_name)
                 metadata = {'metadata' : extension[1]}
+
+                # Attempt to upload the file to the bucket
                 try:
                     # 3. SDK call
                     #    - When uploading the source_file_name and add it to object's meta-data
@@ -170,12 +174,15 @@ class S3Handler:
         return operation_successful
 
     def delete(self, dest_object_name, bucket_name):
+        # Verify if the bucket exists
         try:
             response = self.client.head_bucket(Bucket = bucket_name)
 
+            # Verify the object exists
             try:
                 response = self.client.head_object(Bucket = bucket_name, Key = dest_object_name)
 
+                # Attempt to delete the object
                 try:
                     response = self.client.delete_object(Bucket = bucket_name, Key = dest_object_name)
 
@@ -196,11 +203,37 @@ class S3Handler:
 
     def deletedir(self, bucket_name):
         # Delete the bucket only if it is empty
+        try:
+            response = self.client.head_bucket(Bucket = bucket_name)
+
+            # Grab the bucket
+            s3 = boto3.resource('s3')
+            bucket = s3.Bucket(bucket_name)
+
+            empty = True
+            for obj in bucket.objects.all():
+                empty = False
+                break
+
+            # Verify whether bucket isd empty
+            if empty:
+                # Attempt to delete the empty bucket
+                try:
+                    response = self.client.delete_bucket(Bucket = bucket_name)
+
+                except Exception as e:
+                    return self._error_messages('unknown_error')
+            else:
+                print('The directory is not empty')
+                return self._error_messages('unknown_error')
+
+        except Exception as e:
+            return self._error_messages('non_existent_bucket')
 
         # Success response
-        # operation_successful = ("Deleted bucket %s." % bucket_name)
+        operation_successful = ("Deleted bucket %s." % bucket_name)
 
-        return self._error_messages('not_implemented')
+        return operation_successful
 
 
     def find(self, file_extension, bucket_name=''):
