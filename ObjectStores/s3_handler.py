@@ -97,35 +97,62 @@ class S3Handler:
                 resource_list += bucket.name
                 resource_list += ', '
 
-        # If bucket_name is provided, check that bucket exits.
         else:
-            # If bucket_name is provided then display the names of all objects in the bucket
-            bucket = s3.Bucket(bucket_name)
-            for obj in bucket.objects.all():
-                resource_list += obj.key
-                resource_list += ', '
+            try:
+                # If bucket_name is provided, check that bucket exits.
+                bucket = s3.Bucket(bucket_name)
 
-        # Cut out extra comma
-        if resource_list:
-            resource_list = resource_list[:-2]
+                # If bucket_name is provided then display the names of all objects in the bucket
+                for obj in bucket.objects.all():
+                    resource_list += obj.key
+                    resource_list += ', '
+
+                # Cut out extra comma
+                if resource_list:
+                    resource_list = resource_list[:-2]
+
+            except Exception as e:
+                resource_list = self._error_messages('non_existent_bucket')
 
         return resource_list
 
-    def upload(self, source_file_name, bucket_name, dest_object_name=''):
+    def upload(self, source_file_name, bucket_name, dest_object_name):
         # 1. Parameter Validation
         #    - source_file_name exits in current directory
         #    - bucket_name exists
+        try:
+            response = self.client.head_bucket(Bucket = bucket_name)
 
-        # 2. If dest_object_name is not specified then use the source_file_name as dest_object_name
+            try:
+                s3 = boto3.resource('s3')
+                # 2. If dest_object_name is not specified then use the source_file_name as dest_object_name
+                if not dest_object_name:
+                    dest_object_name = source_file_name
 
-        # 3. SDK call
-        #    - When uploading the source_file_name and add it to object's meta-data
-        #    - Use self._get_file_extension() method to get the extension of the file.
+                extension = self._get_file_extension(source_file_name)
+                metadata = {'metadata' : extension[1]}
+                try:
+                    # 3. SDK call
+                    #    - When uploading the source_file_name and add it to object's meta-data
+                    #    - Use self._get_file_extension() method to get the extension of the file.
+                    s3.meta.client.upload_file(source_file_name, bucket_name, dest_object_name,
+                        ExtraArgs = {'Metadata':
+                                        {'Metadata' : metadata['metadata']},
+                                    })
+
+                except:
+                    return self._error_messages('unknown_error')
+
+            except:
+                return self._error_messages('missing_source_file')
+
+        except:
+            return self._error_messages('non_existent_bucket')
 
         # Success response
-        # operation_successful = ('File %s uploaded to bucket %s.' % (source_file_name, bucket_name))
+        operation_successful = ('File %s uploaded to bucket %s.' % (source_file_name, bucket_name))
 
-        return self._error_messages('not_implemented')
+        return operation_successful
 
 
     def download(self, dest_object_name, bucket_name, source_file_name=''):
@@ -189,10 +216,12 @@ class S3Handler:
             # source_file_name and bucket_name are compulsory; dest_object_name is optional
             # Use self._error_messages['incorrect_parameter_number'] if number of parameters is less
             # than number of compulsory parameters
-            if len(parts) > 1:
+            if len(parts) > 2:
                 source_file_name = parts[1]
                 bucket_name = parts[2]
-                dest_object_name = parts[3]
+                dest_object_name = ''
+                if len(parts) > 3:
+                    dest_object_name = parts[3]
                 response = self.upload(source_file_name, bucket_name, dest_object_name)
             else:
                 response = self._error_messages('incorrect_parameter_number')
