@@ -237,14 +237,25 @@ class S3Handler:
 
 
     def find(self, file_extension, bucket_name=''):
+        objects = ''
         # Return object names that match the given file extension
+        # Search the specific bucket
+        if bucket_name:
+            try:
+                response = self.client.head_bucket(Bucket = bucket_name)
 
+                
+            except:
+                return self._error_messages('non_existent_bucket')
+        # Search all buckets
+        else:
         # If bucket_name is specified then search for objects in that bucket.
         # If bucket_name is empty then search all buckets
 
+        if objects == '':
+            objects = 'No Files Found'
 
-
-        return self._error_messages('not_implemented')
+        return objects
 
 
     def dispatch(self, command_string):
