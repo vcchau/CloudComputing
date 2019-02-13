@@ -247,6 +247,10 @@ class S3Handler:
                 bucket = s3.Bucket(bucket_name)
 
                 for obj in bucket.objects.all():
+
+                    # print(obj.key.metadata)
+                    # print(obj)
+
                     if obj.key.endswith(file_extension):
                         objects.append(obj.key)
 
@@ -341,7 +345,7 @@ class S3Handler:
 
         elif parts[0] == 'find':
             if len(parts) > 1:
-                file_extension = parts[1]
+                file_extension = parts[1][1:]
                 bucket_name = ''
 
                 if len(parts) > 2:
