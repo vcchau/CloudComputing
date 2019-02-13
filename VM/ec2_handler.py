@@ -34,8 +34,6 @@ class EC2ResourceHandler:
                       'Values': ['machine']},
                      {'Name': 'root-device-type',
                       'Values': ['ebs']},
-                    #  {'Name': 'name',
-                    #   'Values': ['amzn-ami-hvm-????.??.?.????????-x86_64-gp2']},
                      ],
         )
         ami_id = ''

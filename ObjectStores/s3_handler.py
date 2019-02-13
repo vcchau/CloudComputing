@@ -90,24 +90,32 @@ class S3Handler:
 
     def listdir(self, bucket_name):
         s3 = boto3.resource('s3')
+        resource_list = ''
         # If bucket_name is empty then display the names of all the buckets
         if not bucket_name:
             for bucket in s3.buckets.all():
-                print(bucket.name)
+                resource_list += bucket.name
+                resource_list += ', '
 
         # If bucket_name is provided, check that bucket exits.
         else:
             # If bucket_name is provided then display the names of all objects in the bucket
             bucket = s3.Bucket(bucket_name)
             for obj in bucket.objects.all():
-                print(obj.key)
+                resource_list += obj.key
+                resource_list += ', '
 
-        return self._error_messages('not_implemented')
+        # Cut out extra comma
+        if resource_list:
+            resource_list = resource_list[:-2]
+
+        return resource_list
 
     def upload(self, source_file_name, bucket_name, dest_object_name=''):
         # 1. Parameter Validation
         #    - source_file_name exits in current directory
         #    - bucket_name exists
+
         # 2. If dest_object_name is not specified then use the source_file_name as dest_object_name
 
         # 3. SDK call
@@ -181,10 +189,13 @@ class S3Handler:
             # source_file_name and bucket_name are compulsory; dest_object_name is optional
             # Use self._error_messages['incorrect_parameter_number'] if number of parameters is less
             # than number of compulsory parameters
-            source_file_name = ''
-            bucket_name = ''
-            dest_object_name = ''
-            response = self.upload(source_file_name, bucket_name, dest_object_name)
+            if len(parts) > 1:
+                source_file_name = parts[1]
+                bucket_name = parts[2]
+                dest_object_name = parts[3]
+                response = self.upload(source_file_name, bucket_name, dest_object_name)
+            else:
+                response = self._error_messages('incorrect_parameter_number')
         elif parts[0] == 'download':
             # Figure out parameters from command_string
             # dest_object_name and bucket_name are compulsory; source_file_name is optional
@@ -207,6 +218,8 @@ class S3Handler:
             response = self.find(file_extension, bucket_name)
         elif parts[0] == 'listdir':
             bucket_name = ''
+            if len(parts) > 1:
+                bucket_name = parts[1]
             response = self.listdir(bucket_name)
         else:
             response = "Command not recognized."
