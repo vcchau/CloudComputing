@@ -90,12 +90,11 @@ class S3Handler:
 
     def listdir(self, bucket_name):
         s3 = boto3.resource('s3')
-        resource_list = ''
+        resource_list = []
         # If bucket_name is empty then display the names of all the buckets
         if not bucket_name:
             for bucket in s3.buckets.all():
-                resource_list += bucket.name
-                resource_list += ', '
+                resource_list.append(bucket.name)
 
         # Bucket_name is not empty; list contents of the bucket
         else:
@@ -105,17 +104,12 @@ class S3Handler:
 
                 # If bucket_name is provided then display the names of all objects in the bucket
                 for obj in bucket.objects.all():
-                    resource_list += obj.key
-                    resource_list += ', '
-
-                # Cut out extra comma
-                if resource_list:
-                    resource_list = resource_list[:-2]
+                    resource_list.append(obj.key)
 
             except:
                 return self._error_messages('non_existent_bucket')
 
-        return resource_list
+        return (', '.join(resource_list))
 
     def upload(self, source_file_name, bucket_name, dest_object_name):
         # 1. Parameter Validation
@@ -132,7 +126,7 @@ class S3Handler:
                     dest_object_name = source_file_name
 
                 extension = self._get_file_extension(source_file_name)
-                metadata = {'metadata' : extension[1]}
+                metadata = {'metadata' : extension[1][1:]}
 
                 # Attempt to upload the file to the bucket
                 try:
@@ -141,7 +135,7 @@ class S3Handler:
                     #    - Use self._get_file_extension() method to get the extension of the file.
                     s3.meta.client.upload_file(source_file_name, bucket_name, dest_object_name,
                         ExtraArgs = {'Metadata':
-                                        {'Metadata' : metadata['metadata']},
+                                        {'Extension' : metadata['metadata']},
                                     })
 
                 except:
@@ -210,13 +204,14 @@ class S3Handler:
             s3 = boto3.resource('s3')
             bucket = s3.Bucket(bucket_name)
 
-            empty = True
+            # Check contents of bucket
+            isEmpty = True
             for obj in bucket.objects.all():
-                empty = False
+                isEmpty = False
                 break
 
-            # Verify whether bucket isd empty
-            if empty:
+            # Verify whether bucket is empty
+            if isEmpty:
                 # Attempt to delete the empty bucket
                 try:
                     response = self.client.delete_bucket(Bucket = bucket_name)
@@ -224,8 +219,8 @@ class S3Handler:
                 except Exception as e:
                     return self._error_messages('unknown_error')
             else:
-                print('The directory is not empty')
-                return self._error_messages('unknown_error')
+                bucket_not_empty = ('Directory %s is not empty.' % bucket_name)
+                return bucket_not_empty
 
         except Exception as e:
             return self._error_messages('non_existent_bucket')
@@ -236,26 +231,46 @@ class S3Handler:
         return operation_successful
 
 
-    def find(self, file_extension, bucket_name=''):
-        objects = ''
+    def find(self, file_extension, bucket_name):
+        # If bucket_name is specified then search for objects in that bucket.
+        # If bucket_name is empty then search all buckets
+
+        objects = []
+        s3 = boto3.resource('s3')
         # Return object names that match the given file extension
         # Search the specific bucket
         if bucket_name:
             try:
                 response = self.client.head_bucket(Bucket = bucket_name)
 
-                
+                # Grab the bucket
+                bucket = s3.Bucket(bucket_name)
+
+                for obj in bucket.objects.all():
+                    if obj.key.endswith(file_extension):
+                        objects.append(obj.key)
+
             except:
                 return self._error_messages('non_existent_bucket')
-        # Search all buckets
+
         else:
-        # If bucket_name is specified then search for objects in that bucket.
-        # If bucket_name is empty then search all buckets
+            try:
+                # Search all buckets
+                for bucket in s3.buckets.all():
+                    directory = s3.Bucket(bucket.name)
 
-        if objects == '':
-            objects = 'No Files Found'
+                    # Search individual bucket
+                    for obj in directory.objects.all():
+                        if obj.key.endswith(file_extension):
+                            objects.append(obj.key)
 
-        return objects
+            except:
+                return self._error_messages('unknown_error')
+
+        if (len(objects) == 0):
+            return 'No Files Found'
+
+        return (', '.join(objects))
 
 
     def dispatch(self, command_string):
@@ -325,9 +340,13 @@ class S3Handler:
                 response = self._error_messages('incorrect_parameter_number')
 
         elif parts[0] == 'find':
-            if len(parts) > 2:
+            if len(parts) > 1:
                 file_extension = parts[1]
-                bucket_name = parts[2]
+                bucket_name = ''
+
+                if len(parts) > 2:
+                    bucket_name = parts[2]
+
                 response = self.find(file_extension, bucket_name)
 
             else:
