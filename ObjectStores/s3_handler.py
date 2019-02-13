@@ -111,8 +111,8 @@ class S3Handler:
                 if resource_list:
                     resource_list = resource_list[:-2]
 
-            except Exception as e:
-                resource_list = self._error_messages('non_existent_bucket')
+            except:
+                return self._error_messages('non_existent_bucket')
 
         return resource_list
 
@@ -165,17 +165,33 @@ class S3Handler:
         # SDK Call
 
         # Success response
-        # operation_successful = ('Object %s downloaded from bucket %s.' % (dest_object_name, bucket_name))
+        operation_successful = ('Object %s downloaded from bucket %s.' % (dest_object_name, bucket_name))
 
-        return self._error_messages('not_implemented')
-
+        return operation_successful
 
     def delete(self, dest_object_name, bucket_name):
+        try:
+            response = self.client.head_bucket(Bucket = bucket_name)
+
+            try:
+                response = self.client.head_object(Bucket = bucket_name, Key = dest_object_name)
+
+                try:
+                    response = self.client.delete_object(Bucket = bucket_name, Key = dest_object_name)
+
+                except:
+                    return self._error_messages('unknown_error')
+
+            except:
+                return self._error_messages('non_existent_object')
+
+        except:
+            return self._error_messages('non_existent_bucket')
 
         # Success response
-        # operation_successful = ('Object %s deleted from bucket %s.' % (dest_object_name, bucket_name))
+        operation_successful = ('Object %s deleted from bucket %s.' % (dest_object_name, bucket_name))
 
-        return self._error_messages('not_implemented')
+        return operation_successful
 
 
     def deletedir(self, bucket_name):
@@ -220,36 +236,66 @@ class S3Handler:
                 source_file_name = parts[1]
                 bucket_name = parts[2]
                 dest_object_name = ''
+
                 if len(parts) > 3:
                     dest_object_name = parts[3]
+
                 response = self.upload(source_file_name, bucket_name, dest_object_name)
+
             else:
                 response = self._error_messages('incorrect_parameter_number')
+
         elif parts[0] == 'download':
             # Figure out parameters from command_string
             # dest_object_name and bucket_name are compulsory; source_file_name is optional
             # Use self._error_messages['incorrect_parameter_number'] if number of parameters is less
             # than number of compulsory parameters
-            source_file_name = ''
-            bucket_name = ''
-            dest_object_name = ''
-            response = self.download(dest_object_name, bucket_name, source_file_name)
+            if len(parts) > 2:
+                dest_object_name = parts[1]
+                bucket_name = parts[2]
+                source_file_name = ''
+
+                if len(parts) > 3:
+                    source_file_name = parts[3]
+
+                response = self.download(dest_object_name, bucket_name, source_file_name)
+
+            else:
+                response = self._error_messages('incorrect_parameter_number')
+
         elif parts[0] == 'delete':
-            dest_object_name = ''
-            bucket_name = ''
-            response = self.delete(dest_object_name, bucket_name)
+            if len(parts) > 2:
+                dest_object_name = parts[1]
+                bucket_name = parts[2]
+                response = self.delete(dest_object_name, bucket_name)
+
+            else:
+                response = self._error_messages('incorrect_parameter_number')
+
         elif parts[0] == 'deletedir':
-            bucket_name = ''
-            response = self.deletedir(bucket_name)
+            if len(parts) > 1:
+                bucket_name = parts[1]
+                response = self.deletedir(bucket_name)
+
+            else:
+                response = self._error_messages('incorrect_parameter_number')
+
         elif parts[0] == 'find':
-            file_extension = ''
-            bucket_name = ''
-            response = self.find(file_extension, bucket_name)
+            if len(parts) > 2:
+                file_extension = parts[1]
+                bucket_name = parts[2]
+                response = self.find(file_extension, bucket_name)
+
+            else:
+                response = self._error_messages('incorrect_parameter_number')
+
         elif parts[0] == 'listdir':
             bucket_name = ''
             if len(parts) > 1:
                 bucket_name = parts[1]
+
             response = self.listdir(bucket_name)
+
         else:
             response = "Command not recognized."
         return response
