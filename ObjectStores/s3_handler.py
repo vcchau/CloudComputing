@@ -4,6 +4,7 @@ import logging
 import os
 import sys
 import traceback
+from datetime import datetime
 
 LOG_FILE_NAME = 'output.log'
 
@@ -153,13 +154,34 @@ class S3Handler:
         return operation_successful
 
 
-    def download(self, dest_object_name, bucket_name, source_file_name=''):
+    def download(self, dest_object_name, bucket_name, source_file_name):
         # if source_file_name is not specified then use the dest_object_name as the source_file_name
         # If the current directory already contains a file with source_file_name then move it as a backup
         # with following format: <source_file_name.bak.current_time_stamp_in_millis>
 
         # Parameter Validation
+        s3 = boto3.resource('s3')
 
+        try:
+            bucket = s3.Bucket(bucket_name)
+
+            try:
+                if not source_file_name:
+                    source_file_name = dest_object_name
+
+                # Verify if source_file_name already exists
+                if os.path.isfile(source_file_name):
+                    filename = self._get_file_extension(source_file_name)
+                    timestamp = datetime.now().time()
+                    source_file_name = filename[0] + '.bak.' + str(timestamp) + filename[1]
+
+                bucket.download_file(dest_object_name, source_file_name)
+
+            except Exception as e:
+                print(e)
+                return self._error_messages('non_existent_object')
+        except:
+            return self._error_messages('non_existent_bucket')
         # SDK Call
 
         # Success response
