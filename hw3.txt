@@ -1,0 +1,61 @@
+
+1)  What is Consistent Hashing? How is it different than regular Hashing?
+ Assign a slot number to a node using the same hash function for the objects. The objects will be serviced by the node whose range they fall in.
+ Imagine the nodes as a ring, with different nodes taking up different slots. Each object follows an order to find their service node, and when one node is 
+ added/removed, the objects find the next closest inorder node. This is different from normal hashing because when the size of the table changes almost all 
+ objects need to be rehashed. 
+
+2)  Refer to class notes for this example. Consider that sHash space key range: 0-40 and there are three nodes N1, N2, N3 
+with following node hashes:
+-  h(N1) = 10, h(N2) = 20, h(N3) = 25
+-  Show the Key range managed by each node
+N1: 26-10, N2: 11-20, N2: 21-25
+
+-  Suppose new Node is added N4 with h(N4) = 32. Show the new key ranges managed by each node.
+N1: 33-10, N2: 11-20, N3: 21-25, N4: 26-32
+
+-  Which data keys need to be moved? From which node to which node?
+Keys from range 26-32 need to be mooved from N1 to N4
+
+-  Suppose now node N1 is deleted. Show the new key ranges for each node, data that needs to removed, and from which node to other node?
+N2: 33-20, N3: 21-25, N4: 26-32
+All items from N1 are moved to N2
+
+3) Read Sections 1 and 1.1 of Consistent Hashing paper [1] and answer following questions:
+-  Describe one (or more) real examples of "hot spots" that you might have observed or heard about.
+Amazon website on Prime Day 
+
+-  Proxy caches are supposed to be good for removing hot spots. As a designer of the caching layer what are some of
+-  the things that you need to consider when designing such a layer?
+The amount of requests, who to forward the requests to if a certain layer becomes swamped, how large of a set of requests a cache is supposed to handle,
+what to do in the case of a cache getting swamped 
+
+-  Suppose you want to dynamically create a new cache node. Describe how can you use your Assignment 1 for this purpose?
+We can use our Assignment 1 to create a new ec2 instance and give it specific security group/traffic rules whenever we need to dynamically 
+create a new cache node 
+
+4) Read Sections 1, 3, 4.1, 4.2, 4.3 of Chord paper [2]. You can skip the theorems. Answer following questions:
+    -  What hashing function is used by Chord?
+    A variant of consistent hashing 
+
+    -  What is used as hash key for the node?
+
+    -  What is a successor node?
+
+    -  Referring to figure 2, what is successor(4)
+
+    -  Assume that a new node is added and its hash is 6. Will this affect successor(4)? Why?
+
+    -  Assume that a new node is added and its hash is 2. Will this affect successor(4)? Why?
+
+    -  What is finger table?
+
+
+5) How much downtime is allowed if a system has 99.999% availability?
+8,760 hours/year * 99.999% availability = .0876 hrs = 5.256 minutes downtime a year 
+
+6) What is the availability percentage if a system can be down only for half an hour within a year?
+99.994% availability 
+
+7) Figure out your AWS Account Canonical User ID from AWS Console
+Go to 'Security Credentials' -> 'Account Identifiers'
