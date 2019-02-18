@@ -1,0 +1,42 @@
+2) Read “Xen and the Art of Virtualization” paper [1] (till section 3.1) and answer following questions.
+You can skip following sections - section that compare Xen with Denali and section 2.1.1.
+
+-  Why is it necessary to isolate Virtual Machines from each other?
+Malicious VMs can cause thrashing and starvation
+
+
+-  Why it is necessary to support unmodified application binaries in Xen?
+Multiple guests OSes can coesxist when you support unmodified aplication binaries instead of requiring a specific ABI (application binary interface)
+
+
+-  Explain the differences between full virtualization & paravirtualization?
+Full virtualization requires the full hardware to be virtualized to host a guest OS. Paravirtualization only requires parts of the hardware to be virtualized,
+allowing multiple guest OSes 
+
+-  Xen uses an optimization technique of 'fast' exception handler to improve performance of guest OS's system calls. Explain in your own words 
+-  how does this technique work.
+Each guest OS can pre-register a 'fast' exception handler which is pre-validated at ring 0 (most priveleged). This allows exceptions to bypass Xen and be 
+handled by each pre-registered exception handler. This is not possible with page faults because only ring 0 code can read faulting addresses, most guest OSes run 
+at a privelege right below ring 0, (ring 1)
+
+-  What is Domain0 in Xen?
+A domain created at boot time that is allowed to use the control interface. This is responsible for hosting the 
+application-level management software - 'priveleged mode' for other applications 
+
+
+3) State True / False
+
+-  Virtualizing CPU is difficult on x86 architecture
+True 
+
+-  On x86 CPUs, zero is the least privileged level and three is the most privileged level
+False
+
+-  Hypercall is the mechanism used by guest domains to make a call into Xen
+True
+
+-  Hypercall is an asynchronous mechanism
+False 
+
+-  There is no mechanism in Xen hypervisor similar to Unix Signal mechanism
+False
