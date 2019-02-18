@@ -1,0 +1,14 @@
+4. Running hospital - Dedicated host - we want to be able to place our host in the specific geographic regions that will handle the patient's data
+storage optimized instances because we don't want the specific geographic regions that process the hospital's requests to become overloaded and bogged down
+Alternatively, we could use a compute optimized instance because the few regions that handle the requests will become bottlenecks for the hospital's IT system
+
+IT department - dedicated instance because there is less visibility for instances s.t. the hardware is not shared 
+
+5. 
+Reserved Instances - allowed to make reserved capacity demands if you know your estimated traffic, you can reserved RI rates whenever you launch an instance that matches your RI plan's configuration
+Very useful if you know your est. traffic over a period of time which can save you lots of money
+
+Spot Instances - instances that only are up a small time
+useful whenever you have jobs that take up a short amount of time, CI/CD, rendering, etc 
+useful for fault-tolerant applications 
+up to 90% discount from on-demand 
