@@ -39,16 +39,25 @@ create a new cache node
     A variant of consistent hashing 
 
     -  What is used as hash key for the node?
+    the data's name
 
     -  What is a successor node?
+    A node whose identifier is equal to or follows k 
+    successor(k) = successor node of key k; the first node clockwise from k
 
     -  Referring to figure 2, what is successor(4)
+    Node 0, key 6 
 
     -  Assume that a new node is added and its hash is 6. Will this affect successor(4)? Why?
+    Yes, successor(4) will now be the node hashed at 6 because it will be the first node 
+    clockwise from 4
 
     -  Assume that a new node is added and its hash is 2. Will this affect successor(4)? Why?
+    No, there already exists 1+ nodes before hash 2, so successor(4) will not be affected 
 
     -  What is finger table?
+    A routing table storing at most m entries maintained by each nod, used for identifying 
+    successors  
 
 
 5) How much downtime is allowed if a system has 99.999% availability?

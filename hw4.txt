@@ -1,0 +1,85 @@
+1)  Refer to the Eventual Consistency paper:  
+https://cacm.acm.org/magazines/2009/1/15666-eventually-
+consistent/fulltext.
+Explain following terms in your own language with an example:
+-  Read-your-write consistency
+a process that updates an item will always see the updated value of that item 
+ex: if A writes to B from 4->5 then A will always access B with a value of 5
+
+-  Session consistency
+a practical version of read-your-write consistency: any updates to a value made during 
+a single session are guaranted read-your-write consistency
+there are no overlapping guarantees between different sessions 
+ex: if A writes to B 4->5 during session C then while in session C, A will always 
+access B with value 5. if the session terminates for some reason and we begin 
+session D then there is no guarantee that A will access B with value 5
+
+-  Inconsistency window
+The period of time between an update and when an access will always return the 
+updated value 
+ex: A writes to B from 4->5: the time period where subsequent accesses to B still
+return 4 some of the time 
+
+-  Causal Consistency
+if A tells B about an update to an item then an access by B will return the updated 
+value; an access by C with no relationship to A will be subject to normal eventual 
+consistency
+ex: if A tells B that 4->5 then B will always return 5, however C accessing B may 
+return 4 or 5
+
+2) Using https://stackshare.io/ find out companies that are using both 
+Amazon EC2 and Amazon S3 in their tech stack.
+Are there any popular names that you recognize?
+AirBnB, Netflix, Pinterest, Reddit, Vine, Yelp, Quora, 9gag 
+
+3) Suppose N = 10 what could be possible R and W value to attain strong 
+consistency?
+R, W: {1, 2,... 10} s.t. R + W > 10
+
+4) Prove that minimum values of R and W to attain strong consistency is 
+ceiling((N+1)/2)
+min(R, W) = ceil((N+1)/2)
+R + W > N 
+ceil((N+1)/2) + ceil((N+1)/2) > N 
+ceil(N+1) > N 
+
+5) How much downtime is allowed if a system has 99.999% availability?
+5.256 minutes/year 
+
+6) What is the availability percentage if a system can be down only for 
+half an hour within a year?
+99.994% availability
+
+7) Refer to Dynamo paper: 
+https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf
+Answer following questions in your own words:
+-  What is the advantage of using Virtual Nodes in Consistent Hashing?
+Better load balancing when a node enters/leaves the system 
+
+-  Explain how the technique of Hinted Handoff works?
+In the event that a certain node is down, a replica is sent to a different node. 
+This replica contains 'hints' that tell which node was the intended recipient until 
+that node recovers. Once it does, the replica is sent to the intended node and the 
+temporary holding node can delete its copy once the transfer succeeds  
+
+-  Argue if following statement is correct or incorrect:
+-  Because Dynamo uses concept of Virtual Nodes it is possible to have 
+-  following setup:
+-  N=3, W=4, R=4 where the desired counts of read and write replicas are 
+-  satisfied using one of the Virtual Nodes in the system.
+Yes, the virtual nodes act like physical nodes in that loads can be balanced 
+across them. 
+
+
+-  State whether following statements are true or false:
+    -  Dynamo uses optimistic replication technique
+    False 
+
+    -  In Dynamo, setting of W=1 is not possible
+    False 
+
+    -  In Dynamo, setting of R=1 is possible
+    True
+
+    -  It is not possible to set up Dynamo in a strongly consistent setup
+    False - typical Dynamo values are NRW = (3, 2, 2)
