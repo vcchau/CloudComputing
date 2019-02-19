@@ -1,0 +1,65 @@
+1.  Explain the purpose of Libvirt.
+Libvirt is a Python library for virtualizing OSes (domains) on machines (hosts).
+Libvirt contains functions that allow you to get the status/info of hosts/domains and manage domains. 
+
+2.  Answer True or False:
+-  When working with S3 one can leverage built-in S3 mechanisms to control simultaneous access to an S3 object from 
+-  concurrent clients.
+False 
+
+-  When working with S3 it is the responsibility of application developer to define any inter-key relationships 
+-  that may be needed by the application.
+True 
+
+-  IPv4 addresses are conceptually broken into <Network Number, Host Number>. The Network Mask is 
+-  used to extract Network number from an IP address by defining the number of lower order bits from the IP 
+-  address that should be considered for retrieving the Network Number.
+False 
+
+-  In consistent hashing object key is rehashed when a node joins/leaves.
+False 
+
+-  Strongly consistent systems have inconsistency window of size 0.
+True 
+
+3. Explain what does it mean when SLA for a system is defined to be 99.8th percentile at a given latency value (say, 300 ms).
+Out of 1000 requests, only 2 of them will take > 300 ms 
+
+4. What is the idea behind UserData in Amazon EC2. Explain some of its uses.
+
+5. What are some of the reasons that Node partitions may occur in a data center.
+To have availability of objects in case a particular node fails, so data is not lost and can always be served 
+
+6. When we talk about Node partitions in context of the CAP theorem, are these partitions known to us before hand?
+Yes 
+
+7. What is the Hinted Handoff technique in Dynamo?
+A replica of an object O is sent to another node B in the event that a node A crashes. O contains information or 'hints' as to who 
+the original requester/intended recipient A of the object O was. In the event that the intended recipient comes back up, B sends O 
+to A and can delete his replica 
+
+8. For the following applications explain whether the data storage system needs to provide strong consistency, or 
+  if eventual consistency is sufficient:
+-  Social media feeds
+eventual 
+
+-  Bank transactions
+strong 
+
+-  Weather data collection system
+eventual 
+
+-  Domain Name system (DNS)
+eventual 
+
+9. Explain how get() and put() operations work in Dynamo.
+
+10. What are some of the advantages of using Virtual Machines?
+
+11. Based on your experience of assignment1 and assignment2, identify best practices for developing programs that 
+    interact with cloud-based systems?
+
+12. Give values of N, R, W that will give following characteristics to a storage system:
+-  Always writeable (inconsistencies resolved at read time)
+-  Always readable 
+-  Strong consistency

@@ -12,6 +12,7 @@ Multiple guests OSes can coesxist when you support unmodified aplication binarie
 -  Explain the differences between full virtualization & paravirtualization?
 Full virtualization requires the full hardware to be virtualized to host a guest OS. Paravirtualization only requires parts of the hardware to be virtualized,
 allowing multiple guest OSes 
+** Paravirtualization modifies the guest OS **
 
 -  Xen uses an optimization technique of 'fast' exception handler to improve performance of guest OS's system calls. Explain in your own words 
 -  how does this technique work.
