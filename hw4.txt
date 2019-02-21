@@ -67,13 +67,12 @@ temporary holding node can delete its copy once the transfer succeeds
 -  following setup:
 -  N=3, W=4, R=4 where the desired counts of read and write replicas are 
 -  satisfied using one of the Virtual Nodes in the system.
-Yes, the virtual nodes act like physical nodes in that loads can be balanced 
-across them. 
+No, W and R cannot exceed N where N, W, R all refer to the number of physical nodes. 
 
 
 -  State whether following statements are true or false:
     -  Dynamo uses optimistic replication technique
-    False 
+    True  
 
     -  In Dynamo, setting of W=1 is not possible
     False 

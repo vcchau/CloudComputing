@@ -36,10 +36,10 @@ create a new cache node
 
 4) Read Sections 1, 3, 4.1, 4.2, 4.3 of Chord paper [2]. You can skip the theorems. Answer following questions:
     -  What hashing function is used by Chord?
-    A variant of consistent hashing 
+    A variant of consistent hashing, SHA-1
 
     -  What is used as hash key for the node?
-    the data's name
+    the node's IP address 
 
     -  What is a successor node?
     A node whose identifier is equal to or follows k 

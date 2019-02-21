@@ -55,9 +55,16 @@ eventual
 9. Explain how get() and put() operations work in Dynamo.
 
 10. What are some of the advantages of using Virtual Machines?
+- isolation: you can run buggy applications without harming any other system
+- utilize full node capacity and reduce overhead 
+- use different operating systems 
 
 11. Based on your experience of assignment1 and assignment2, identify best practices for developing programs that 
     interact with cloud-based systems?
+- it is good to know what type of consistency your cloud platform has
+- always check if you have permissions/authorization to do a particular operation, return an error if not allowed 
+- check the validity of your data -> if an object/bucket exists already
+- always double check everything 
 
 12. Give values of N, R, W that will give following characteristics to a storage system:
 -  Always writeable (inconsistencies resolved at read time)
