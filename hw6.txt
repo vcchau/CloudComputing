@@ -1,0 +1,75 @@
+
+1)  Explain the difference between Infrastructure-as-Code (IaC) and
+Infrastructure-as-a-Service (IaaS).
+
+- Infrastructure as a service usually means exposing your APIs and other
+resources for the client to use with tools like CLIs, SDKs, UIs
+    - IaaS tends to focus more on create/delete operations
+      - ex: AWS EC2 or RDS
+
+- IaC is the managing of infrastructure in a way that is easy to understand;
+the declarative infrastructure is the "code" which uses IaaS internally to provision
+resources
+    - ex: you can create templates when provisioning a resource which makes
+      it easy to see when it succeeds/fails
+        - ex: deployment.yaml file?
+
+2)  State whether following statement are True or False:
+-  IaC cannot be used with PaaS
+  True
+
+-  CloudFormation is an example of IaC whereas Terraform is an example of PaaS
+  False; Terraform is IaaS, CloudFormation is still IaC
+
+-  Elastic Beanstalk uses CloudFormation snippets to customize Infrastructure resources
+  False
+
+3) Multiple choice. Select all that apply:
+A DevOps person is someone who:
+a)  Develops applications
+b)  Develops and deploys applications
+c)  Develops infrastructure code
+d)  Uses PaaSes
+e)  Uses CloudFormation
+
+C, D, E
+
+4) Study AWS CloudFormation documentation and answer following questions:
+https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/GettingStarted.html
+-  What is meant by a Cloud Formation template?
+  A Cloud Formation Template is a declarative template of all the resources that make
+  up your stack.
+
+-  What is meant by a Cloud Formation stack?
+  A Cloud Formation stack is any collection of resources that you can manage
+  as a single unit.
+
+-  What is the relationship between a template and a stack?
+  A template defines all of the resources that will form your stack.
+
+-  A CF template can contain multiple resource definition.
+-  Is there a way to enforce ordering in the resource create actions?
+  You can enforce ordering by listing your values in the order that you want them
+  to appear, separated by a delimiter.
+
+-  What is notion of Parameters with regards to CF templates?
+  You can define the template to take certain user input parameters.
+
+
+-  What is resource CreationPolicy?
+  You can define a minimum number of success signals to receive before allowing
+  a resource to be created.
+
+-  What is resource DeletionPolicy?
+  You can define what to do whenever a resource is deleted, like retain a backup.
+
+-  What is the purpose of intrinsic function Fn::GetAZs?
+  Fn::GetAZs returns an array that lists Availability Zones for a specified region.
+  This allows template authors to write templates that adapt to a user's region.
+
+-  Is it possible to conditionally create stack resources? Explain how?
+  Yes. You can use conditional intrinsic functions to define something based on
+  some parameters.
+    - ex: "Conditions" : {
+              "CreateProdResources" : {"Fn::Equals" : [{"Ref" : "EnvType"}, "prod"]}
+            }
