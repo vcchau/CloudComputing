@@ -1,0 +1,97 @@
+1)  In your own words explain what is meant by container scheduling.
+    - The creation of containers on a set schedule or triggered by a certain action/condition 
+
+2)  True or False:
+-  Containers and VM are similar.
+    True 
+
+-  CloudFormation and Kubernetes offer conceptually the same functionality.
+    True 
+
+-  Google Cloud SQL and AWS RDS offer conceptually the same functionality.
+    True 
+
+3) Explain with an example the binding issue as it pertains to containerized applications.
+
+
+4) The manual deployment steps given below keep your Cloud SQL instance wide-open.
+https://github.com/devdattakulkarni/CloudComputing/blob/master/Containers/Kubernetes-examples/GCP/steps.txt
+Why is it so? Be specific in your answer. What steps would you take to ensure that your application deploys correctly AND
+the Cloud SQL is not wide open.
+
+ - We keep the SQL instance open so that anyone can use our application to make changes to the database. That way 
+ they are not bound to a specific device which lets our application be more portable. We can instant use normal TCP traffic 
+ ingress rules and allow all requests on port 80, which is the default port for http traffic. That way the SQL is not wide open 
+ but still allows general web traffic to make modifications to the database. 
+
+5) Try the steps that you identified above.
+
+6) Read https://www.usenix.org/system/files/conference/hotcloud16/hotcloud16_burns.pdf
+-  Explain what is the Sidecar pattern. What are its advantages?
+    This is when you have one main container serviced by multiple 'sidecar' containers that help with other less important tasks. 
+    Advantages include making full/better use of CPU and spare resources, and it is easier to divide responsibilities for development 
+
+-  Explain what is the Ambassador pattern.
+    The Ambassador pattern is when an Ambassador container proxies communication from a main container to different 'shards'. This 
+    makes it easier for the developer in that they only have to think about their connection to their application on localhost, can test 
+    their app on a local machine instance, and can reuise the Ambassador with other applications. 
+
+-  Explain what it the Adapter pattern.
+    The Adapter pattern standardizes output and interfaces across multiple containers. Allows legacy/open-source applications to have 
+    the same uniform interface without making changes to the original code
+
+-  Explain which pattern would you choose for following situations.
+-  A containerized web application that needs to store data in Google Cloud SQL and Google Cloud Datastore.
+    Ambassador
+
+-  A containerized web application that is written in Java and needs to expose an endpoint from which different application metrics can be collected.
+    Adapter 
+
+-  Describe a scenario where you will use the Sidecar pattern.
+    When running a web server that needs to perform multiple background tasks such as fetching from a Git repo 
+
+7) Explain what is the controller loop in Kubernetes.
+    The controller loop is when we constantly check the current_state of the container against the desired_state. We constantly check 
+    and if they don't match, we perform a 'reconciliation action' which makes changes in order to get the current_state to the desired_state.
+
+8) Read the Twelve-Factor App manifesto (https://12factor.net/) and answer following questions:
+-  Consider the Backing services factor: https://12factor.net/backing-services
+It says that your applications should be written such that it should be possible to swap out application's backing services. 
+Think about your assignment 3. Was it possible for you to easily swap out a local database when developing your application, 
+with Cloud SQL instance when deploying the application to GKE?
+    Relatively so yes 
+
+-  Consider the Config factor: https://12factor.net/config
+-  Explain why is it important to separate an application's configuration from its code.
+    Because application configurations can vary substantially between each deploy while the code remains relatively the same.
+
+-  What is the problem with using config files as a configuration mechanism?
+    It is hard to keep track of the proper config files as they can exist in multiple locations or be accidentally added to a repo 
+
+9) Multiple choice. Choose all those that apply.
+Docker-based containers are a good choice for writing Twelve-factor based web applications because:
+a)  Docker containers allow defining application's configuration through ENV variables
+b)  Docker uses image layering when building application's container images which helps with the Dependency management factor
+c)  Docker containers can be orchestrated through Kubernetes
+d)  Docker containers run as processes making them easy to scale up / scale down
+e)  Docker containers are built using Dockerfile which provides a way to capture application's OS-level dependencies in addition to any language-level dependencies 
+(which are captured through language-specific dependency filessuch as pom.xml, requirements.txt, package.json, etc.)
+A, B, D 
+
+10) With regards to Kubernetes explain following terms in your own words:
+-  What is a Pod?
+    A pod is a single unit of deployment and contains:
+        –an application container
+        –Storage resources required by the container
+        –A Unique network IP address
+        –Options that govern how the container should run
+
+-  What is a Service?
+    A single grouping of Pods 
+
+-  What is the purpose of Label mechanism?
+    They are used by deployment controllers for the reconciliation action as part of the control loop. You can easily 
+    modify a pod by adding/removing Labels 
+
+-  What is Deployment Controller
+    The mechanism to control/create/update Pods 
