@@ -1,0 +1,37 @@
+1)  Read https://medium.com/netflix-techblog/titus-the-netflix-container-management-platform-is-now-open-source-f868c9fb5436
+Why did Netflix decide to build their own container orchestration system instead of using Amazon ECS or Kubernetes?
+    They needed a CaaS that could handle their scaling needs better while still giving them control over everything 
+
+
+2)  Read https://www.slideshare.net/adrianco/netflix-global-cloud
+-  What was the effect on latency for web page and API calls when Netflix transitioned to AWS?
+    Lower latency 
+
+-  Which specific requests were considered as part of latency calculations?
+    first hit (home page) and in-session hits for same user 
+
+-  What metrics were used in their experimentation?
+    mean/99th percentile 
+
+
+3) True/False
+-  Netflix control plane is deployed in multiple AWS availability zones
+    True 
+
+-  Netflix's approach for AWS region failure is to transition the client traffic to GCP cloud
+    False 
+
+-  S3's 99.999999999% durability and 99.99% availability is sufficient for Netflix and so it doesnot incorporate strategies to handle S3 failures
+    False 
+
+
+4) Read https://cloudplatform.googleblog.com/2016/09/bringing-Pokemon-GO-to-life-on-Google-Cloud.html
+-  Suppose Niantic wanted to use AWS for Pokemon GO. Explain the services they would have used.
+    ec2, CloudWatch, AutoScaling   
+
+
+5) One of Niantic's requirements was zero-downtime when upgrading their GKE clusters.
+How you would achieve zero-downtime deployments in your assignment 4?
+    We could switch our replacement development practice with that of canary or blue-green development. We would launch
+    another instance of our application whenever we deploy updates to use for either canary or green traffic, then rerout all traffic 
+    once there are no issues resulting in 0 downtime 
