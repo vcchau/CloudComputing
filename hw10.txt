@@ -1,0 +1,33 @@
+1)  Explain in your own words what is load balancing.
+    Load balancing is the process of balancing out traffic (the "load") between the available resources such that one single 
+    resource is not overloaded beyond capacity. Load balancing can also help in the event that one or more nodes falls by redirecting 
+    traffic from those nodes to other available nodes while they recuperate
+
+2)  Explain advantages of using a load balancer within an application architecture.
+    You can increase your throughput and decrease response time by redirecting traffic to the appropriate instance. 
+
+3)  Explain the role of a load balancer plays in a CICD setup.
+    You can distribute the CI/CD tasks to multiple resources instead of being bottlenecked 
+
+4)  What is SSL termination?
+    The decryption of https traffic 
+
+5)  In typical setups application architecture where is SSL termination implemented? Why?
+    As part of the load balancer. The load balancer can decrypt all https traffic and deny any invalid requests from ever
+    reaching the application server 
+
+6)  Explain what is monitoring and why is it needed?
+    Periodic checks of an applications state; needed to ensure a seamless user experience 
+
+7)  Autoscaling is a feature where number of application instances areincreased/decreased automatically. 
+With this understanding explain the following statement:
+"Autoscaling of any PaaS is made possible only by the existence of a monitoring solution and a load balancing solution."
+    Autoscaling exists because monitoring gives real-time info about things such as how many instances are running, the amount of traffic, 
+    the amount of requests per minute, and the location of traffic. Load balancing can take this information and create/destroy/re-allocate resources 
+    to properly match the needs of the application based on the information taken from the monitoring solution 
+
+
+8)  Explain what all things you might want to monitor in your assignment 3?
+    The amount of requests, the status of the application server, SQL instance, GCP vm instance 
+
+    

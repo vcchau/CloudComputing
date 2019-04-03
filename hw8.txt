@@ -1,0 +1,58 @@
+1)  In your own words describe what is the microservice architecture.
+    The separation of a traditionally monolithic code base into separate frameworks of a certain service. 
+    These services can be accessed by other services through REST/http 
+
+2)  Compare and contrast microservice architecture and monolithic architecture. Be specific in your answers.
+    A monolithic code base is typically easier to manage, maintain, and deploy because it is all contained in one location. 
+    However, it may usually need to be maintained by one team who has knowledge of the entire codebase. It is also typically 
+    written in a single langauge. 
+
+    The microservice architecture breaks up the giant codebase into manageable parts of a single function. 
+    This allows for separate development of different features with different teams on each feature, and different programming languages 
+    to be used. However this results in overhead when beginning application development because you need to design and split up your 
+    code base based on different features/components. 
+
+3)  Explain which option would you choose between PaaS and CaaS in each of the following scenarios.
+-  You want to start from application code and don't have to worry about writing Dockerfiles
+    PaaS 
+
+-  Your application consists of separate components that are developed by different teams
+    CaaS 
+
+-  Your application needs to be deployed at the end of every week
+    CaaS
+
+-  Your application needs to be scaled up and rolledback to a previous version
+    PaaS
+
+-  You are still developing your application and want to deploy and test it during this phase
+    CaaS
+
+
+4) Select the options that are incorrect.
+A microservice architecture is thus called because:
+a)  Such an architecture allows different teams to work on different parts of the application
+b)  Such an architecture requires same programming language to be used in different parts
+c)  It is easy to get started with this kind of architecture as services are microscopic in size
+d)  It allows different teams to release different parts of the application at different schedules
+B, D 
+
+5) Make a precise argument either supporting or refuting following statement. 
+"A PaaS is a CaaS with end-to-end functionality."
+    Yes. You can specify the requirements of containers to the platform which then runs it in a way that 
+    the developer never has to worry about things like RAM, OS usage, etc. 
+
+
+6) Make a precise argument either supporting or refuting following statement.
+"A CaaS is a IaC if containers are thought of as infrastructure resources."
+    Yes. In the same way you can declare the infrastructure programatically, you can declare your containers 
+    programatically (like using Dockerfiles) to deploy your applications in a way that you never have to 
+    interact with with infrastructure manually. 
+
+7) Consider your assignment 3. Describe two different ways you can split it into microservice architecture.
+Explain pros/cons of each architecture.
+
+    1) split the web application and container into separate microservice frameworks. One team could 
+    focus specifically on the web application (making changes to the database, front-end UI, etc)
+    while the other could focus on the deployment of the web app and handling things like SQL ingress rules,
+    CI/CD tasks for updates 

@@ -1,0 +1,95 @@
+1)  Explain following terms/concepts in your own words:
+-  continuous integration
+    continually testing your software to make sure all updates ensure the same functionality and pass 
+    a suite of tests 
+
+-  continuous delivery
+    the ability to delivery code continuously by having your code always in a deployable state; 
+    'tagging' any new release in the master branch after passing all tests 
+
+-  continous deployment
+    deploying tagged artifacts 
+
+2) Using your assignment 4, answer following questions:
+-  What is the role of Webhook?
+    A web hook is a URL which CI/CD servers receives requests 
+
+-  How did we make sure that the Jenkins server is able to execute gcloud and kubectl commands successfully?
+    We gave the Jenkins server admin access and authorized it with our gcloud login 
+
+-  Why are we using Ingress as part of the Kubernetes deployment?
+    To allow any changes from any server to trigger a task on the Jenkins server 
+
+3) Sketch design of a Platform-as-a-Service (PaaS) that performs CICD.
+The commands that such a PaaS should support are as follows:
+-  cld app test -> This should execute unit tests of an application
+-  cld app build -> This should test an application and cut a release
+-  cld app deploy -> This should test, build, and deploy application
+
+'cld' is the command-line client of this PaaS (similar to eb cli, gcloud cli, kubectl, etc.),
+You will install it on your workspace machine (VM/Laptop).
+Assume that this PaaS needs to support stateless as well as stateful applications (i.e. applications that need MySQL database).
+-  Carefully describe all the components that you will need in this PaaS.
+    It will need the ability to deploy containers to run the unit tests of an application, as well as the functionality to deploy 
+    the application 
+
+-  Explain if your PaaS will support any of the 12 factors? If so, how?
+    Depencies, backing services, build release and run, logs, dev/prod parity, and config 
+
+-  Explain the exact steps that need to happen for the application code on your machine to get deployed.
+ What capability is required for each stage of the process.
+    A container will be created to test the application code. The code is built and than ran against the unit tests. After successfully passing 
+    the tests, the code is then deployed using CaaS 
+
+4) What is the Pre-merge gating process? Why is it so called?
+    The pre-merge gating process is the suite of tests any code must pass before it is accepted and merged into 
+    the master branch. It is called this because the tests act as the "gate" before the "merge" into the master. 
+
+5) Based on your understanding of Pre-merge gating, explain what can possibly be a post-merge testing approach? 
+Are there any drawbacks of this approach? If so, what?
+    Running unit tests after merging as well as acceptance tests 
+
+
+6) In your assignment 4 we performed 'replacement' type of deployment. Explain how you will perform blue-green deployment instead. 
+Provide specific details in your answer.
+    Instead of replacing the changes we can launch a new containerized application on a different IP address. We'll perform our unit testing 
+    and live testing on the new application and once it passes, we can switch the tags on the two applications to redirect traffic to the newest version. 
+    We will do so by changing the IP address that http traffic gets redirected to to the new application, while still keeping our previous application 
+    in the event we will need to do a rollback. 
+
+
+7) Why is continuous deployment to production environments a rare phenomenon?
+    It's just not the smartest thing to do. We don't want downtime in our application should anything go wrong 
+    
+
+8) Compare and contrast canary deployment approach with blue-green deployment approach.
+    Canary development is similar to blue-green in that they both redirect traffic instead of replacing the entire application 
+    like in replacement development. In canary development, we redirect a small % of traffic to the new application to act as live testing, and 
+    redirect all traffic if there are no bugs/issues. In blue-green development we only redirect all the traffic once the new application passes unit and 
+    live testing. We then switch the tags which redirects all traffic at once to the green tagged application, while keeping the blue tagged application 
+    in the event of a rollback.
+
+
+9) How are managed services such as databases handled in a CICD setup?
+    Usually kept separate from the CI/CD setup and halded through "infrastructure creation and config management"
+
+
+10) What is meant by configuration management?
+    The management and creating of infrastructure elements needed by an application 
+        - ex: config 'root' user on SQL instance of assignment 3 
+
+
+11) In the class we have learnt several interpretations of the word 'DevOps'. Explain all these interpretations in your own words.
+    DevOps relates to the management of resources used during the development, testing, and deployment stages of an application. 
+    This includes things like creating/configuring a CI/CD testing environment to configuring infrastructure needed by an application 
+    or deploying an application after it has passes pre-merge gating. 
+
+
+
+12) Read following articles:
+-  https://code.facebook.com/posts/270314900139291/rapid-release-at-massive-scale/
+-  https://medium.com/netflix-techblog/how-we-build-code-at-netflix-c5d9bd727f15
+-  https://www.slideshare.net/beamrider9/continuous-deployment-at-etsy-a-tale-of-two-approaches
+Based on your understanding of CICD and above articles, think about any project/assignment that you have done in your career 
+so far in which you have not used CICD. Explain how you might use CICD for that project now?List the advantages in terms of code quality, 
+availability, etc. that you might achieveby using CICD in that project.

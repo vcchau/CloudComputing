@@ -12,6 +12,7 @@
     True 
 
 3) Explain with an example the binding issue as it pertains to containerized applications.
+    The mapping of one folder to another in the context of the containerized application  
 
 
 4) The manual deployment steps given below keep your Cloud SQL instance wide-open.
